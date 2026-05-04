@@ -207,8 +207,8 @@ let currentMottoIndex = 0;
 let lastMottoSwitchTime = 0;
 const mottoOffCanvas = document.createElement('canvas');
 const mottoOffCtx = mottoOffCanvas.getContext('2d', { willReadFrequently: true });
-mottoOffCanvas.width = 1000;
-mottoOffCanvas.height = 300;
+mottoOffCanvas.width = 1600;
+mottoOffCanvas.height = 400;
 
 function handleMottoParticles() {
     const currentTime = Date.now();
@@ -223,7 +223,7 @@ function handleMottoParticles() {
         mottoOffCtx.fillStyle = 'white';
         mottoOffCtx.textBaseline = 'middle';
         mottoOffCtx.textAlign = 'center';
-        mottoOffCtx.font = 'bold 70px Outfit';
+        mottoOffCtx.font = 'bold 100px Outfit';
         mottoOffCtx.fillText(currentMotto, mottoOffCanvas.width / 2, mottoOffCanvas.height / 2);
 
         const imgData = mottoOffCtx.getImageData(0, 0, mottoOffCanvas.width, mottoOffCanvas.height);
