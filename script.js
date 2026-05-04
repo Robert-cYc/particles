@@ -97,6 +97,110 @@ function init() {
     }
 }
 
+// Time Particle Implementation
+let timeParticlesArray = [];
+let lastTimeStr = "";
+const offCanvas = document.createElement('canvas');
+const offCtx = offCanvas.getContext('2d', { willReadFrequently: true });
+offCanvas.width = 600;
+offCanvas.height = 250;
+
+class TimeParticle {
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.targetX = x;
+        this.targetY = y;
+        this.size = Math.random() * 1.5 + 0.5;
+        this.color = '#ffffff';
+        this.vx = (Math.random() - 0.5) * 2;
+        this.vy = (Math.random() - 0.5) * 2;
+    }
+    update() {
+        let dx = this.targetX - this.x;
+        let dy = this.targetY - this.y;
+        
+        if (mouse.x != null && mouse.y != null) {
+            let mdx = mouse.x - this.x;
+            let mdy = mouse.y - this.y;
+            let distance = Math.sqrt(mdx * mdx + mdy * mdy);
+            if (distance < mouse.radius) {
+                let force = (mouse.radius - distance) / mouse.radius;
+                this.x -= (mdx / distance) * force * 5;
+                this.y -= (mdy / distance) * force * 5;
+            }
+        }
+
+        this.x += dx * 0.1;
+        this.y += dy * 0.1;
+        
+        this.draw();
+    }
+    draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+    }
+}
+
+function handleTimeParticles() {
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString();
+    const dateStr = now.toLocaleDateString();
+    const fullStr = timeStr + dateStr;
+
+    if (fullStr !== lastTimeStr) {
+        lastTimeStr = fullStr;
+        offCtx.clearRect(0, 0, offCanvas.width, offCanvas.height);
+        offCtx.fillStyle = 'white';
+        offCtx.textBaseline = 'top';
+        offCtx.textAlign = 'right';
+        offCtx.font = 'bold 80px Outfit';
+        offCtx.fillText(timeStr, offCanvas.width - 10, 10);
+        offCtx.font = '300 60px Outfit';
+        offCtx.fillText(dateStr, offCanvas.width - 10, 110);
+
+        const imgData = offCtx.getImageData(0, 0, offCanvas.width, offCanvas.height);
+        const data32 = new Uint32Array(imgData.data.buffer);
+
+        let newTargets = [];
+        const offsetX = innerWidth - offCanvas.width - 20;
+        const offsetY = 20;
+
+        for (let y = 0; y < offCanvas.height; y += 4) {
+            for (let x = 0; x < offCanvas.width; x += 4) {
+                if (data32[y * offCanvas.width + x] & 0xff000000) {
+                    newTargets.push({
+                        x: x + offsetX,
+                        y: y + offsetY
+                    });
+                }
+            }
+        }
+
+        if (timeParticlesArray.length < newTargets.length) {
+            let diff = newTargets.length - timeParticlesArray.length;
+            for (let i = 0; i < diff; i++) {
+                timeParticlesArray.push(new TimeParticle(innerWidth/2, innerHeight/2));
+            }
+        } else if (timeParticlesArray.length > newTargets.length) {
+            timeParticlesArray.splice(newTargets.length);
+        }
+
+        const colors = ['#00f2fe', '#4facfe', '#ffffff'];
+        for (let i = 0; i < newTargets.length; i++) {
+            timeParticlesArray[i].targetX = newTargets[i].x;
+            timeParticlesArray[i].targetY = newTargets[i].y;
+            timeParticlesArray[i].color = colors[i % colors.length];
+        }
+    }
+
+    for (let p of timeParticlesArray) {
+        p.update();
+    }
+}
+
 function animate() {
     requestAnimationFrame(animate);
     ctx.clearRect(0, 0, innerWidth, innerHeight);
@@ -105,6 +209,7 @@ function animate() {
         particlesArray[i].update();
     }
     connect();
+    handleTimeParticles();
 }
 
 function connect() {
