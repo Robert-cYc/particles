@@ -83,7 +83,7 @@ class Particle {
 function init() {
     particlesArray = [];
     let numberOfParticles = (canvas.height * canvas.width) / 9000;
-    const colors = ['#00f2fe', '#4facfe', '#ffffff', '#8a2be2'];
+    const colors = ['#ff0055', '#ff9900', '#00ffcc', '#33ccff', '#cc33ff', '#ffff00', '#ff6600', '#00ff00', '#00ffff', '#ff00ff', '#ffffff'];
 
     for (let i = 0; i < numberOfParticles; i++) {
         let size = (Math.random() * 2) + 0.5;
@@ -188,7 +188,7 @@ function handleTimeParticles() {
             timeParticlesArray.splice(newTargets.length);
         }
 
-        const colors = ['#00f2fe', '#4facfe', '#ffffff'];
+        const colors = ['#ff0055', '#ff9900', '#00ffcc', '#33ccff', '#cc33ff', '#ffff00', '#ff6600', '#00ff00', '#00ffff', '#ff00ff', '#ffffff'];
         for (let i = 0; i < newTargets.length; i++) {
             timeParticlesArray[i].targetX = newTargets[i].x;
             timeParticlesArray[i].targetY = newTargets[i].y;
