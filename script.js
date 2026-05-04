@@ -201,6 +201,71 @@ function handleTimeParticles() {
     }
 }
 
+// Motto Implementation
+let mottoParticlesArray = [];
+let currentMottoIndex = 0;
+let lastMottoSwitchTime = 0;
+const mottoOffCanvas = document.createElement('canvas');
+const mottoOffCtx = mottoOffCanvas.getContext('2d', { willReadFrequently: true });
+mottoOffCanvas.width = 1000;
+mottoOffCanvas.height = 300;
+
+function handleMottoParticles() {
+    const currentTime = Date.now();
+    
+    // Switch motto every 10 seconds
+    if (currentTime - lastMottoSwitchTime > 10000 || lastMottoSwitchTime === 0) {
+        lastMottoSwitchTime = currentTime;
+        const currentMotto = mottos[currentMottoIndex];
+        currentMottoIndex = (currentMottoIndex + 1) % mottos.length;
+
+        mottoOffCtx.clearRect(0, 0, mottoOffCanvas.width, mottoOffCanvas.height);
+        mottoOffCtx.fillStyle = 'white';
+        mottoOffCtx.textBaseline = 'middle';
+        mottoOffCtx.textAlign = 'center';
+        mottoOffCtx.font = 'bold 70px Outfit';
+        mottoOffCtx.fillText(currentMotto, mottoOffCanvas.width / 2, mottoOffCanvas.height / 2);
+
+        const imgData = mottoOffCtx.getImageData(0, 0, mottoOffCanvas.width, mottoOffCanvas.height);
+        const data32 = new Uint32Array(imgData.data.buffer);
+
+        let newTargets = [];
+        const offsetX = innerWidth / 2 - mottoOffCanvas.width / 2;
+        const offsetY = innerHeight / 2 - mottoOffCanvas.height / 2;
+
+        for (let y = 0; y < mottoOffCanvas.height; y += 4) {
+            for (let x = 0; x < mottoOffCanvas.width; x += 4) {
+                if (data32[y * mottoOffCanvas.width + x] & 0xff000000) {
+                    newTargets.push({
+                        x: x + offsetX,
+                        y: y + offsetY
+                    });
+                }
+            }
+        }
+
+        if (mottoParticlesArray.length < newTargets.length) {
+            let diff = newTargets.length - mottoParticlesArray.length;
+            for (let i = 0; i < diff; i++) {
+                mottoParticlesArray.push(new TimeParticle(innerWidth / 2, innerHeight / 2));
+            }
+        } else if (mottoParticlesArray.length > newTargets.length) {
+            mottoParticlesArray.splice(newTargets.length);
+        }
+
+        const colors = ['#ff0055', '#ff9900', '#00ffcc', '#33ccff', '#cc33ff', '#ffff00', '#ff6600', '#00ff00', '#00ffff', '#ff00ff', '#ffffff'];
+        for (let i = 0; i < newTargets.length; i++) {
+            mottoParticlesArray[i].targetX = newTargets[i].x;
+            mottoParticlesArray[i].targetY = newTargets[i].y;
+            mottoParticlesArray[i].color = colors[Math.floor(Math.random() * colors.length)];
+        }
+    }
+
+    for (let p of mottoParticlesArray) {
+        p.update();
+    }
+}
+
 function animate() {
     requestAnimationFrame(animate);
     ctx.clearRect(0, 0, innerWidth, innerHeight);
@@ -210,6 +275,7 @@ function animate() {
     }
     connect();
     handleTimeParticles();
+    handleMottoParticles();
 }
 
 function connect() {
