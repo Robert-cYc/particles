@@ -82,7 +82,7 @@ class Particle {
 
 function init() {
     particlesArray = [];
-    let numberOfParticles = (canvas.height * canvas.width) / 9000;
+    let numberOfParticles = (canvas.height * canvas.width) / 3000;
     const colors = ['#ff0055', '#ff9900', '#00ffcc', '#33ccff', '#cc33ff', '#ffff00', '#ff6600', '#00ff00', '#00ffff', '#ff00ff', '#ffffff'];
 
     for (let i = 0; i < numberOfParticles; i++) {
@@ -113,8 +113,8 @@ class TimeParticle {
         this.targetY = y;
         this.size = Math.random() * 1.5 + 0.5;
         this.color = '#ffffff';
-        this.vx = (Math.random() - 0.5) * 2;
-        this.vy = (Math.random() - 0.5) * 2;
+        this.vx = 0;
+        this.vy = 0;
     }
     update() {
         let dx = this.targetX - this.x;
@@ -126,13 +126,19 @@ class TimeParticle {
             let distance = Math.sqrt(mdx * mdx + mdy * mdy);
             if (distance < mouse.radius) {
                 let force = (mouse.radius - distance) / mouse.radius;
-                this.x -= (mdx / distance) * force * 5;
-                this.y -= (mdy / distance) * force * 5;
+                this.vx -= (mdx / distance) * force * 5;
+                this.vy -= (mdy / distance) * force * 5;
             }
         }
 
-        this.x += dx * 0.1;
-        this.y += dy * 0.1;
+        // Spring physics
+        this.vx += dx * 0.05;
+        this.vy += dy * 0.05;
+        this.vx *= 0.85; // friction
+        this.vy *= 0.85;
+
+        this.x += this.vx;
+        this.y += this.vy;
         
         this.draw();
     }
@@ -215,6 +221,7 @@ function handleMottoParticles() {
     
     // Switch motto every 10 seconds
     if (currentTime - lastMottoSwitchTime > 10000 || lastMottoSwitchTime === 0) {
+        let isInitialLoad = (lastMottoSwitchTime === 0);
         lastMottoSwitchTime = currentTime;
         const currentMotto = mottos[currentMottoIndex];
         currentMottoIndex = (currentMottoIndex + 1) % mottos.length;
@@ -258,6 +265,13 @@ function handleMottoParticles() {
             mottoParticlesArray[i].targetX = newTargets[i].x;
             mottoParticlesArray[i].targetY = newTargets[i].y;
             mottoParticlesArray[i].color = colors[Math.floor(Math.random() * colors.length)];
+            
+            if (!isInitialLoad) {
+                let angle = Math.random() * Math.PI * 2;
+                let speed = Math.random() * 60 + 20; // Burst of speed for explosion
+                mottoParticlesArray[i].vx = Math.cos(angle) * speed;
+                mottoParticlesArray[i].vy = Math.sin(angle) * speed;
+            }
         }
     }
 
