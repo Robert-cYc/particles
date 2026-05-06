@@ -89,8 +89,8 @@ function init() {
         let size = (Math.random() * 2) + 0.5;
         let x = (Math.random() * ((innerWidth - size * 2) - (size * 2)) + size * 2);
         let y = (Math.random() * ((innerHeight - size * 2) - (size * 2)) + size * 2);
-        let directionX = (Math.random() * 1.5) - 0.75;
-        let directionY = (Math.random() * 1.5) - 0.75;
+        let directionX = (Math.random() * 0.4) - 0.2;
+        let directionY = (Math.random() * 0.4) - 0.2;
         let color = colors[Math.floor(Math.random() * colors.length)];
         
         particlesArray.push(new Particle(x, y, directionX, directionY, size, color));
@@ -132,10 +132,10 @@ class TimeParticle {
         }
 
         // Spring physics
-        this.vx += dx * 0.05;
-        this.vy += dy * 0.05;
-        this.vx *= 0.85; // friction
-        this.vy *= 0.85;
+        this.vx += dx * 0.02;
+        this.vy += dy * 0.02;
+        this.vx *= 0.9; // friction
+        this.vy *= 0.9;
 
         this.x += this.vx;
         this.y += this.vy;
@@ -268,7 +268,7 @@ function handleMottoParticles() {
             
             if (!isInitialLoad) {
                 let angle = Math.random() * Math.PI * 2;
-                let speed = Math.random() * 60 + 20; // Burst of speed for explosion
+                let speed = Math.random() * 20 + 10; // Burst of speed for explosion
                 mottoParticlesArray[i].vx = Math.cos(angle) * speed;
                 mottoParticlesArray[i].vy = Math.sin(angle) * speed;
             }
