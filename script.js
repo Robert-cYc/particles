@@ -301,12 +301,14 @@ function connect() {
             if (distance < (canvas.width / 7) * (canvas.height / 7)) {
                 opacityValue = 1 - (distance / 20000);
                 if (opacityValue > 0) {
-                    ctx.strokeStyle = `rgba(79, 172, 254, ${opacityValue})`;
+                    ctx.globalAlpha = opacityValue;
+                    ctx.strokeStyle = particlesArray[a].color;
                     ctx.lineWidth = 1;
                     ctx.beginPath();
                     ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
                     ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
                     ctx.stroke();
+                    ctx.globalAlpha = 1.0;
                 }
             }
         }
