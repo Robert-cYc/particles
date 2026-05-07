@@ -89,8 +89,8 @@ function init() {
         let size = (Math.random() * 2) + 0.5;
         let x = (Math.random() * ((innerWidth - size * 2) - (size * 2)) + size * 2);
         let y = (Math.random() * ((innerHeight - size * 2) - (size * 2)) + size * 2);
-        let directionX = (Math.random() * 0.4) - 0.2;
-        let directionY = (Math.random() * 0.4) - 0.2;
+        let directionX = (Math.random() * 3) - 1.5;
+        let directionY = (Math.random() * 3) - 1.5;
         let color = colors[Math.floor(Math.random() * colors.length)];
         
         particlesArray.push(new Particle(x, y, directionX, directionY, size, color));
@@ -303,7 +303,7 @@ function connect() {
                 if (opacityValue > 0) {
                     ctx.globalAlpha = opacityValue;
                     ctx.strokeStyle = particlesArray[a].color;
-                    ctx.lineWidth = 1;
+                    ctx.lineWidth = 0.2;
                     ctx.beginPath();
                     ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
                     ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
